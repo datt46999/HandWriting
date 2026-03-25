@@ -17,16 +17,19 @@ def select2df(data_path):
     
 
     df = df.rename(columns={0: "file_name", 8: "text"})
-    
     df = df[["file_name", "text"]]
-   
+
+    df['text'] = df['text'].fillna("")
+    df['text'] = df['text'].astype(str)
+    df['text'] = df['text'].str.strip()
+
+    
+    df = df[df['text'] != ""]
     df = df[~df['text'].isin(['at', ',', ')'])]
     df = df[df['file_name'] != 'a01-117-05-02']
-    df['text'] = df['text'].astype(str)
-    
 
-    df = df[df['text'].str.strip() != ""]
     df.reset_index(drop=True, inplace=True)
+    
     return df
 
 def process_image(img, img_cfg):
@@ -66,30 +69,33 @@ class IAM_dataset(Dataset):
                 [self.cfg.cdict.get(c, 0) for c in text],  # 0 = blank
                 dtype=torch.long
             )
-            
+            return pixel_values, labels
         else:
             image = Image.open(file_path).convert("RGB")
-            # _, processor = modeluse(self.model_name, self.cfg)
-            if self.processor is None:
-                print("check name of model")
-            try:
-                pixel_values = self.processor(image, return_tensors = "pt").pixel_values
+
+            try: 
+                pixel_values = self.processor(image, return_tensors="pt").pixel_values
+                
             except:
                 pixel_values = torch.zeros((3, 384, 384))
-            
-            # labels = self.processor.tokenizer(text = labels, padding = "max_length", truncation = True, max_leght = self.max_target).input_ids
-            labels = self.processor.tokenizer(
-                text,
-                padding="max_length",
-                truncation=True,
-                max_length=self.max_target
-            ).input_ids
+                #lablels = torch.zeros((128))
+                #encoding = {"pixel_values": pixel_values.squeeze(), "labels": torch.tensor(labels)}
+                #return encoding
+                #pixel_values = self.processor(image, return_tensors="pt").pixel_values
+
+            # add labels (input_ids) by encoding the text
+            labels = self.processor.tokenizer(text,
+                                            padding="max_length",
+                                            truncation=True,
+                                            max_length=self.max_target).input_ids
+            # important: make sure that PAD tokens are ignored by the loss function
             labels = [label if label != self.processor.tokenizer.pad_token_id else -100 for label in labels]
-            labels = labels + [-100] * (self.max_target  - len(labels)) 
+            labels = labels + [-100] * (self.max_target - len(labels))
+
             encoding = {"pixel_values": pixel_values.squeeze(), "labels": torch.tensor(labels)}
             return encoding
 
-        return pixel_values, labels
+        
 
 
 
