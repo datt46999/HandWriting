@@ -12,7 +12,7 @@ from utils.train_transformers import Transformer_trainning, sel_attributes, sele
 
 from data.iamdataset import process
 from config.cnn_rnn import Confg
-from config.trocr_fineturn import CONFIG_trocr
+from config.trocr_finetune import CONFIG_trocr
 from net.model import CNN_RNN
 
 
