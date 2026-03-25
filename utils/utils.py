@@ -65,7 +65,7 @@ def modeluse(name_model, cfg):
 
     if(name_model == "trocr"):
         model = VisionEncoderDecoderModel.from_pretrained(cfg.model).to(device)
-        process = TrOCRProcessor.from_pretrained(cfg.processor)
+        processor = TrOCRProcessor.from_pretrained(cfg.processor)
     else:
         print("don't have name model")
-    return model, process
+    return model, processor
