@@ -8,18 +8,19 @@ from time import gmtime, strftime
 from utils.utils import Logger, write_logg, modeluse
 # from utils.ddp_utils import ddp_setup
 from utils.train_utils import Training, dataloader
-from utils.train_transformers import Transformer_trainning, sel_attributes, select_dataloader
+from utils.train_transformers import Transformer_trainning, sel_attributes, select_dataloader, newemd
 
 from data.iamdataset import process
 from config.cnn_rnn import Confg
 from config.trocr_finetune import CONFIG_trocr
+from config.donut_finetune import CONFIG_donut
 from net.model import CNN_RNN
 
 
 def parse_arguments(params: Optional[Tuple] = None):
     parse =argparse.ArgumentParser(description = " Model deeplearing")
     parse.add_argument("-c", "--command", required= True, type = str, help = "Training or testing pipeline", choices= ['train', "test"])
-    parse.add_argument("-n", "--model_name", required= True, type = str, help = "selec model for training", choices= ['CNN_RNN', "trocr"])
+    parse.add_argument("-n", "--model_name", required= True, type = str, help = "selec model for training", choices= ['CNN_RNN', "trocr", "donut"])
     # parse.add_argument('-p', "--path-to-config", required=True, type = str, help = "Path to config")
     parse.add_argument("--gpu", required=False, type = int, default= 1, help = "GPU to use")
     know_args , _ = parse.parse_known_args(params)
@@ -56,13 +57,17 @@ def run(args):
     else:
         if args.model_name == "trocr":
             config = CONFIG_trocr
+        elif args.model_name == "donut":
+            config = CONFIG_donut
         model, processor = modeluse(args.model_name, config)
 
         dataset = process(root_dir, word_path, config, args.model_name)
         train_loader, val_loader = select_dataloader(dataset, config)
         
         sel_attributes(model, processor, config)
-        
+        if args.model_name == "donut":
+            newemd(model, processor, config)
+ 
         # log_file = write_logg(f"logs/{strftime('%Y_%m_%d_%H_%M_%S', gmtime())}train.log")
         # kaggel
         log_file = write_logg(f"/kaggle/working/logs/{strftime('%Y_%m_%d_%H_%M_%S', gmtime())}train.log")
@@ -74,8 +79,8 @@ def run(args):
 
         if args.command == "train":
             trainer.train()
-        # if args.command == "test":
-        #     trainer.test()
+        if args.command == "test":
+            trainer.test()
 
     log_file.close()
 if __name__ == "__main__":
