@@ -1,10 +1,12 @@
-transformers==4.36.1
+omegaconf
+editdistance
+numpy<2
 
-tensorflow==2.9.3
+transformers==4.36.1
+torch>=2.1.0
+torchvision
+tensorflow
 pandas>=1.4.2
 wandb>=0.15.12
 tqdm>=4.64.0
 Pillow>=9.4.0
-omegaconf
-editdistance
-numpy<2
