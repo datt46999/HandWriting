@@ -16,7 +16,7 @@ class CONFIG_trocr:
     num_beams = 4
 
     # training
-    max_epochs = 5
+    max_epochs = 20
     lr = 1e-5
     display_step = 1000
     
