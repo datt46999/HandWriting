@@ -26,7 +26,7 @@ python run.py -c train - n <name_of_model>
 Since our model is too large, so you need to download manually.
 
 
-Link model Pre-trained:
+Link model Pre-trained of three model:
 
 https://drive.google.com/drive/folders/1PvkxsACJ-Eq2qk0vX5Nhldj5ctqaH8s9?usp=sharing
 
