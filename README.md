@@ -7,7 +7,7 @@ This project focuses on handwritten English text recognition using the IAM datas
     
     > This cannot be reachable, so we use the processed dataset from **Kaggle**: https://www.kaggle.com/datasets/nibinv23/iam-handwriting-word-database
 ### Remember:
-install torch, torchvision suitable for your computer
+install torch, torchvision suitable for cuda of computer
 
 
 ```shell
