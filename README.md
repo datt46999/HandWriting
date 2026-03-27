@@ -16,7 +16,7 @@ cd HandWriting
 pip install -r requirements.txt
 ```
 ## 👨‍🏫 Get Started
-Script include three model: CNN_RNNm trocr, donut
+Script include three model: CNN_RNN, trocr, donut
 ## Train
 ```shell
 python run.py -c train - n <name_of_model>
