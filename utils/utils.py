@@ -1,4 +1,4 @@
-from transformers import  TrOCRProcessor, VisionEncoderDecoderModel
+from transformers import  TrOCRProcessor, VisionEncoderDecoderModel, DonutProcessor, DonutImageProcessor, AutoTokenizer
 import torch
 
 from time import gmtime, strftime
@@ -15,11 +15,6 @@ class Logger:
        
 
     def log_iteration(self, epoch, iter_idx, loss=None):
-        if self.gpu != 0:
-            return
-
-        if loss is not None:
-            self.update_loss(loss)
 
         log_str = f"[{strftime('%Y-%m-%d %H:%M:%S', gmtime())}] "
         log_str += f"{self.state} Epoch [{epoch}/{self.max_epoch}] "
@@ -31,8 +26,7 @@ class Logger:
         print(log_str)
 
     def log_metrics(self, epoch, cer=None):
-        if self.gpu != 0:
-            return
+        
 
         log_str = f"[{strftime('%Y-%m-%d %H:%M:%S', gmtime())}] "
         log_str += f"{self.state} Epoch [{epoch}/{self.max_epoch}]"
@@ -63,9 +57,15 @@ class write_logg:
 
 def modeluse(name_model, cfg):
 
-    if(name_model == "trocr"):
+    if name_model == "trocr":
         model = VisionEncoderDecoderModel.from_pretrained(cfg.model).to(device)
         processor = TrOCRProcessor.from_pretrained(cfg.processor)
+    elif name_model == "donut":
+        model = VisionEncoderDecoderModel.from_pretrained(cfg.model).to(device)
+        tokenizer = AutoTokenizer.from_pretrained(cfg.tokenizer )
+        resize = DonutImageProcessor(size={"height": cfg.height, "width": cfg.width})
+        processor = DonutProcessor(resize, tokenizer)
+
     else:
         print("don't have name model")
     return model, processor
