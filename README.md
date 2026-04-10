@@ -32,3 +32,7 @@ https://drive.google.com/drive/folders/1PvkxsACJ-Eq2qk0vX5Nhldj5ctqaH8s9?usp=sha
 
 
 
+## 📖  RUN Demo:
+```shell
+python main.py
+```
